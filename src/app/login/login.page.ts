@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service';
 import { AlertController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
-
+import { AuthService } from '../auth.service';
+import { Subcripcion } from 'rxjs'; 
 
 
 @Component({
@@ -48,3 +47,4 @@ export class LoginPage {
   }
   
 }
+
