@@ -1,4 +1,4 @@
-import { Component,OnInit} from '@angular/core';
+import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimationController } from '@ionic/angular';
 import * as $ from 'jquery';
@@ -8,11 +8,11 @@ import * as $ from 'jquery';
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
 })
-export class RegistroPage implements OnInit {
+export class RegistroPage{
 
   constructor(private router: Router, private animationCtrl: AnimationController) { }
 
-  ngOnInit() {
+  registro() {
     $('#registroForm').on('submit', (e) =>{
       e.preventDefault();
       const nombre = $('#nombre').val();
