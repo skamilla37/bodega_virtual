@@ -23,6 +23,16 @@ export class RegistroPage implements OnInit {
     await alert.present();
   }
 
+  async alertaRegistro() {
+    const alert = await this.alertController.create({
+      header: 'Registro exitoso',
+      message: '¡Gracias por registrarte!',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
   ngOnInit() {
     $('#registroForm').on('submit', (e) =>{
       e.preventDefault();
@@ -35,7 +45,7 @@ export class RegistroPage implements OnInit {
       const passwordValido = /^(?=.*[A-Z])(?=.*[a-z]{3,})(?=.*\d{4,})/.test(password);
 
       if(nombreValido && emailValido && passwordValido) {
-        alert('Registro exitoso');
+        this.alertaRegistro();
         this.router.navigate(['/login']);
       } else {
         let mensaje = 'Por favor, corrija los siguientes errores:\n';
