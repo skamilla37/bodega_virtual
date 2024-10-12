@@ -26,7 +26,19 @@ const routes: Routes = [
   {
     path: 'gestion',
     loadChildren: () => import('./gestion/gestion.module').then( m => m.GestionPageModule)
+  },  {
+    path: 'agregar-producto',
+    loadChildren: () => import('./producto/agregar-producto/agregar-producto.module').then( m => m.AgregarProductoPageModule)
   },
+  {
+    path: 'actualizar-producto',
+    loadChildren: () => import('./producto/actualizar-producto/actualizar-producto.module').then( m => m.ActualizarProductoPageModule)
+  },
+  {
+    path: 'eliminar-producto',
+    loadChildren: () => import('./producto/eliminar-producto/eliminar-producto.module').then( m => m.EliminarProductoPageModule)
+  },
+
 
 
 
