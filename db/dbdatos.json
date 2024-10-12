@@ -1,0 +1,68 @@
+{
+
+    "productos": [
+     {
+        "id": 1,
+        "nombre": "QF- fortex70 30x40cm",
+        "materialidad": "fortex 70"
+     },
+     {
+        "id": 2,
+        "nombre": "QF- fortex60 30x30cm",
+        "materialidad": "fortex 60"
+     },
+     {
+        "id": 3,
+        "nombre": "QF- fortex50 40x50cm",
+        "materialidad": "fortex 50"
+     }
+        
+    ],
+    "ubicaciones": [
+        {
+            "id":2,
+            "nombre": "QF- fortex70 30x40cm",
+            "rack": "1",
+            "ubicacion": "A",
+            "cantidad": "20"
+            
+        },
+        {
+            "id": 4,
+            "nombre": "QF- fortex60 30x30cm",
+            "rack":"2",
+            "ubicacion":"A",
+            "cantidad": "10"
+        },
+        {
+            "id":6,
+            "nombre": "QF- fortex50 40x50cm",
+            "rack":"1",
+            "ubicacion":"A",
+            "cantidad":"30"
+        }
+    ],
+    "usuarios":[
+        {
+            "id":"10",
+            "nombre": "Cesar Escamilla",
+            "email": "cescamill@barronvieyra.cl"
+        },
+        {
+            "id":"20",
+            "nombre": "Carlos Ycochea",
+            "email": "chinbote@barronvieyra.cl"
+        },
+        {
+            "id":"12",
+            "nombre": "Edgardo Pinares",
+            "email": "vegano_como _profe_ingles@barronvieyra.cl"
+        }
+
+    ]
+
+
+
+
+
+}
