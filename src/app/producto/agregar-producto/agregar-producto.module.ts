@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     IonicModule,
     AgregarProductoPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   declarations: [AgregarProductoPage]
 })
