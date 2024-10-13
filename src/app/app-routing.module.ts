@@ -25,8 +25,9 @@ const routes: Routes = [
   },
   {
     path: 'gestion',
-    loadChildren: () => import('./gestion/gestion.module').then( m => m.GestionPageModule)
-  },  {
+    loadChildren: () => import('./producto/gestion/gestion.module').then( m => m.GestionPageModule)
+  },
+  {
     path: 'agregar-producto',
     loadChildren: () => import('./producto/agregar-producto/agregar-producto.module').then( m => m.AgregarProductoPageModule)
   },
