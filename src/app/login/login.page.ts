@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AuthService } from '../auth.service';
-
+import { Storage } from '@ionic/storage-angular';
+import { AuthServiceService } from '../services/auth-service.service';
 
 @Component({
   selector: 'app-login',
@@ -13,37 +13,52 @@ export class LoginPage {
   username: string = '';
   password: string = '';
 
-  constructor(private router: Router, private alertController: AlertController, private authService: AuthService) { }
-
-  validatePassword(password: string): boolean {
-    const numberCount = (password.match(/\d/g) || []).length;
-    const uppercaseCount = (password.match(/[A-Z]/g) || []).length;
-    const lowercaseCount = (password.match(/[a-z]/g) || []).length;
-
-    return numberCount == 4 && uppercaseCount == 1 && lowercaseCount == 3;
+  constructor(
+    private router: Router,
+    private alertController: AlertController,
+    private storage: Storage,
+    private authService: AuthServiceService
+  ) {
+    this.init();
   }
+
+  // Inicializa el almacenamiento
+  async init() {
+    await this.storage.create();
+  }
+
+  // Método para mostrar alertas en la interfaz
   async presentAlert(header: string, message: string) {
     const alert = await this.alertController.create({
       header: header,
       message: message,
-      buttons: ['OK']
+      buttons: ['OK'],
     });
 
     await alert.present();
   }
-  
+
+  // Método de login que utiliza el servicio de autenticación
   async login() {
-    if (!this.validatePassword(this.password)) {
-      await this.presentAlert('Contraseña inválida', 'La contraseña debe contener 4 números, 3 caracteres y 1 mayúscula.');
+    const isAuthenticated = await this.authService.login(this.username, this.password);
+    
+    if (!isAuthenticated) {
+      await this.presentAlert('Error', 'Credenciales incorrectas.');
       return;
     }
-    if (!this.authService.login(this.username, this.password)) {
-      await this.presentAlert('Error de inicio de sesión', 'Credenciales inválidas');
-    } else {
-      this.router.navigate(['/home']);
-    }
 
+    // Almacena la sesión del usuario y navega a la página de inicio
+    await this.storage.set('username', this.username);
+    await this.storage.set('isLoggedIn', true);
+
+    // Define los extras de navegación para pasar el usuario a la siguiente página
+    let navigationExtras: NavigationExtras = {
+      state: {
+        user: this.username, // Envía el nombre de usuario al componente de destino
+      },
+    };
+
+    // Navega a la página de inicio
+    this.router.navigate(['/home'], navigationExtras);
   }
-  
 }
-
