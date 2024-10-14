@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MLproducto } from './model/MLproducto';
+import { MLproducto } from '../producto/model/MLproducto';
 
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
@@ -32,31 +32,29 @@ export class ProductoService {
   obtenerProductos(): Observable<MLproducto[]> {
     return this.http.get<MLproducto[]>(apiUrl)
       .pipe(
-        tap(producto => console.log('fetched productos')),
+        tap(heroes => console.log('fetched productos')),
         catchError(this.handleError('obtenerProductos', []))
       );
   }
 
 
-  obtenerProducto(id: number): Observable<MLproducto> {
-    const url = `${apiUrl}/${id}`;
-    return this.http.get<MLproducto>(url).pipe(
-      tap(_ => console.log(`fetched producto id=${id}`)),
-      catchError(this.handleError<MLproducto>(`obtenerProducto id=${id}`))
+  obtenerProducto(id: String): Observable<MLproducto> {
+    console.log("getProduct ID:" + id);
+    return this.http.get<MLproducto>(apiUrl + "/" + id).pipe(
+      tap(_ => console.log('fetched producto id=${id}')),
+      catchError(this.handleError<MLproducto>('obtenerProducto id=${id}'))
     );
   }
 
   eliminarProducto(id: number): Observable<MLproducto> {
-    const url = `${apiUrl}/${id}`;
-    return this.http.delete<MLproducto>(url, httpOptions).pipe(
-      tap(_ => console.log(`deleted producto id=${id}`)),
+    return this.http.delete<MLproducto>(apiUrl + "/" + id, httpOptions).pipe(
+      tap(_ => console.log('deleted producto id=${id}')),
       catchError(this.handleError<MLproducto>('eliminarProducto'))
     );
   }
-  actualizarProducto(id: number, producto: MLproducto): Observable<any> {
-    const url = `${apiUrl}/${id}`;
-    return this.http.put(url, producto, httpOptions).pipe(
-      tap(_ => console.log(`updated producto id=${id}`)),
+  actualizarProducto(id: number, producto: MLproducto): Observable<MLproducto> {
+    return this.http.put<MLproducto>(apiUrl + "/" + id, producto, httpOptions).pipe(
+      tap(_ => console.log('updated producto id=${id}')),
       catchError(this.handleError<any>('actualizarProducto'))
     );
   }

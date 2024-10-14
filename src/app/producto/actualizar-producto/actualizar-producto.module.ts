@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { ActualizarProductoPageRoutingModule } from './actualizar-producto-routing.module';
 
@@ -13,7 +14,8 @@ import { ActualizarProductoPage } from './actualizar-producto.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    ActualizarProductoPageRoutingModule
+    ActualizarProductoPageRoutingModule,
+    ReactiveFormsModule
   ],
   declarations: [ActualizarProductoPage]
 })

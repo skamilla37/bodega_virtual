@@ -10,7 +10,7 @@ import { ProductoService } from '../producto.service';
   styleUrls: ['./eliminar-producto.page.scss'],
 })
 export class EliminarProductoPage implements OnInit {
-  producto: MLproducto = { id: 0, nombre: '', materialidad: '' };
+  producto: MLproducto = { id: 2, nombre: '', materialidad: '' };
 
   constructor(
     public restApi: ProductoService,
@@ -25,68 +25,62 @@ export class EliminarProductoPage implements OnInit {
   }
 
   // Obtener los datos del producto por su ID
-  async obtenerProducto() {
+  async obtenerProducto(){
     const loading = await this.loadingController.create({
-      message: 'Cargando...',
+      message: 'Cargando...'
     });
     await loading.present();
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.restApi.obtenerProducto(+id).subscribe({
-        next: (res) => {
-          this.producto = res;
-          loading.dismiss();
-        },
-        error: (err) => {
-          console.log("Error al cargar el producto", err);
-          loading.dismiss();
-        }
-      });
-    }
-  }
-
-  // Eliminar el producto con confirmación
-  async eliminarProducto(id: number) {
-    const alert = await this.alertController.create({
-      header: 'Confirmación',
-      message: '¿Está seguro de eliminar el producto?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            console.log('Operación de eliminación cancelada');
-          }
-        },
-        {
-          text: 'Eliminar',
-          handler: () => {
-            this.deleteConfirmado(id);
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  // Confirmar la eliminación del producto
-  async deleteConfirmado(id: number) {
-    const loading = await this.loadingController.create({
-      message: 'Eliminando producto...',
-    });
-    await loading.present();
-
-    this.restApi.eliminarProducto(id).subscribe({
+    await this.restApi.obtenerProducto(this.route.snapshot.params['id']).subscribe({
       next: (res) => {
-        console.log('Producto eliminado correctamente', res);
+        this.producto = res;
         loading.dismiss();
-        this.router.navigate(['/gestion']);
       },
       error: (err) => {
-        console.log("Error al eliminar el producto", err);
+        console.log(err);
         loading.dismiss();
       }
     });
   }
+
+  async eliminarProducto(id: number) {
+    const loading = await this.loadingController.create({
+      message: 'Eliminando producto...'
+    });
+    await loading.present();
+
+    await this.restApi.eliminarProducto(id).subscribe({
+      next: (res) => {
+        loading.dismiss();
+        this.router.navigate(['/gestion']);
+      },
+      error: (err) => {
+        console.log(err);
+        loading.dismiss();
+      }
+    });
+  }
+
+  async presentAlertConfirm(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: message,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          handler: () => {
+            console.log('Confirm Okay');
+          }
+        }
+      ]
+    });
+  }
+
 }
