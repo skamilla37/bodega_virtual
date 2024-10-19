@@ -15,11 +15,8 @@
     <ion-item *ngFor="let p of productos">
       <ion-label>{{p.nombre}}</ion-label>
       <ion-button [routerLink]="['/actualizar-producto/',p.id]"><ion-icon name="pencil-outline"></ion-icon></ion-button><br />
-      <ion-button [routerLink]="['/eliminar-producto',p.id]"><ion-icon name="trash-outline"></ion-icon></ion-button><br />
+      <ion-button color="danger" [routerLink]="['/eliminar-producto',p.id]"><ion-icon name="trash-outline"></ion-icon></ion-button><br />
     </ion-item>
   </ion-list>
-  
-
-
 </ion-content>
   

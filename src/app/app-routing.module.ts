@@ -45,6 +45,23 @@ const routes: Routes = [
     loadChildren: () => import('./producto/eliminar-producto/eliminar-producto.module').then( m => m.EliminarProductoPageModule),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'ubicaciones',
+    loadChildren: () => import('./ubicacion/ubicaciones/ubicaciones.module').then( m => m.UbicacionesPageModule)
+  },
+  {
+    path: 'agregar-ubicacion',
+    loadChildren: () => import('./ubicacion/agregar-ubicacion/agregar-ubicacion.module').then( m => m.AgregarUbicacionPageModule)
+  },
+  {
+    path: 'eliminar-ubicacion/:id',
+    loadChildren: () => import('./ubicacion/eliminar-ubicacion/eliminar-ubicacion.module').then( m => m.EliminarUbicacionPageModule)
+  },
+  {
+    path: 'actualizar-ubicacion/:id',
+    loadChildren: () => import('./ubicacion/actualizar-ubicacion/actualizar-ubicacion.module').then( m => m.ActualizarUbicacionPageModule)
+  },
+
 
 
 

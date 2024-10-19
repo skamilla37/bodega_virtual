@@ -18,18 +18,18 @@
   ],
   "ubicaciones": [
     {
-      "id": "2",
       "nombre": "QF- fortex70 30x40cm",
-      "rack": "1",
+      "rack": "3",
       "ubicacion": "A",
-      "cantidad": "20"
+      "cantidad": "20",
+      "id": "2"
     },
     {
-      "id": "4",
       "nombre": "QF- fortex60 30x30cm",
-      "rack": "2",
+      "rack": "4",
       "ubicacion": "A",
-      "cantidad": "10"
+      "cantidad": "10",
+      "id": "4"
     },
     {
       "id": "6",
