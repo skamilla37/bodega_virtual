@@ -1,7 +1,8 @@
-import { Component,OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimationController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { AuthServiceService } from '../services/auth-service.service'; // Importar el servicio de autenticación
 import * as $ from 'jquery';
 
 @Component({
@@ -11,7 +12,13 @@ import * as $ from 'jquery';
 })
 export class RegistroPage implements OnInit {
 
-  constructor(private router: Router, private animationCtrl: AnimationController, private alertController: AlertController) { }
+  // Inyectar el servicio AuthService
+  constructor(
+    private router: Router, 
+    private animationCtrl: AnimationController, 
+    private alertController: AlertController,
+    private authService: AuthServiceService // Inyectar el AuthService
+  ) {}
 
   async mostrarAlerta(mensaje: string) {
     const alert = await this.alertController.create({
@@ -44,9 +51,21 @@ export class RegistroPage implements OnInit {
       const emailValido = email.endsWith('@barronvieyra.cl');
       const passwordValido = /^(?=.*[A-Z])(?=.*[a-z]{3,})(?=.*\d{4,})/.test(password);
 
-      if(nombreValido && emailValido && passwordValido) {
-        this.alertaRegistro();
-        this.router.navigate(['/login']);
+      if (nombreValido && emailValido && passwordValido) {
+        // Si todo es válido, registramos al usuario en el servidor
+        const nuevoUsuario = { nombre: nombre, email:email, password: password }; // Crear objeto usuario
+
+        // Llamamos al servicio para registrar al usuario
+        this.authService.registrarUsuario(nuevoUsuario).subscribe(
+          (response) => {
+            this.alertaRegistro(); // Mostrar mensaje de éxito
+            this.router.navigate(['/login']); // Redirigir al login
+          },
+          (error) => {
+            console.error('Error al registrar el usuario:', error);
+            this.mostrarAlerta('Hubo un error en el registro, por favor intenta de nuevo.');
+          }
+        );
       } else {
         let mensaje = 'Por favor, corrija los siguientes errores:\n';
         if (!nombreValido) mensaje += '- El nombre debe tener al menos 2 caracteres.\n';

@@ -10,7 +10,7 @@ import { AuthServiceService } from '../services/auth-service.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
-  username: string = '';
+  nombre: string = '';
   password: string = '';
 
   constructor(
@@ -40,7 +40,7 @@ export class LoginPage {
 
   // Método de login que utiliza el servicio de autenticación
   async login() {
-    const isAuthenticated = await this.authService.login(this.username, this.password);
+    const isAuthenticated = await this.authService.login(this.nombre, this.password);
     
     if (!isAuthenticated) {
       await this.presentAlert('Error', 'Credenciales incorrectas.');
@@ -48,13 +48,13 @@ export class LoginPage {
     }
 
     // Almacena la sesión del usuario y navega a la página de inicio
-    await this.storage.set('username', this.username);
+    await this.storage.set('nombre', this.nombre);
     await this.storage.set('isLoggedIn', true);
 
     // Define los extras de navegación para pasar el usuario a la siguiente página
     let navigationExtras: NavigationExtras = {
       state: {
-        user: this.username, // Envía el nombre de usuario al componente de destino
+        user: this.nombre, // Envía el nombre de usuario al componente de destino
       },
     };
 

@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage-angular'; // Ionic Storage para persistencia
+import { Storage } from '@ionic/storage-angular';
+import { HttpClient } from '@angular/common/http'; // Importar HttpClient para interactuar con la API
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthServiceService {
-  private users: any[] = [
-    {
-      username: 'Carlos', // Ejemplo de usuario registrado
-      password: 'Calo1234', // Ejemplo de contraseña
-    }
-  ];
+  private apiUrl = 'http://localhost:3000/usuarios'; // URL del json-server
 
-  constructor(private storage: Storage) {
+  constructor(private storage: Storage, private http: HttpClient) {
     this.init();
   }
 
@@ -22,37 +19,40 @@ export class AuthServiceService {
     this.storage = storage;
   }
 
-  // Comprueba si un usuario ya existe en el sistema
-  checkUserExists(username: string): boolean {
-    return this.users.some(user => user.username === username);
+  // Método para registrar un nuevo usuario en json-server
+  registrarUsuario(usuario: any): Observable<any> {
+    return this.http.post(this.apiUrl, usuario);
   }
 
-  // Método para validar el login con username y contraseña
-  async login(username: string, password: string): Promise<boolean> {
-    // Expresión regular para validar la contraseña:
-    const passwordRegex = /^(?=.*\d{4})(?=.*[a-z]{3})(?=.*[A-Z]).{8,}$/;
-
-    // Valida si la contraseña cumple con los requisitos
-    const isValidPassword = passwordRegex.test(password);
-
-    if (!isValidPassword) {
-      return false; // Retorna false si el formato de contraseña es incorrecto
+  // Método para validar el login con json-server
+  async login(nombre: string, password: string): Promise<boolean> {
+    try {
+      // Realiza una consulta a json-server para buscar el usuario
+      const usuarios = await this.http.get<any[]>(`${this.apiUrl}?nombre=${nombre}&password=${password}`).toPromise();
+      
+      if (usuarios && usuarios.length > 0) {
+        // Si se encuentra el usuario, guarda la sesión
+        await this.setUserSession(usuarios[0].nombre);
+        return true; // Login exitoso
+      } else {
+        return false; // Usuario o contraseña incorrectos
+      }
+    } catch (error) {
+      console.error('Error al realizar el login:', error);
+      return false;
     }
+  }
 
-    // Comprobamos si las credenciales coinciden con un usuario registrado
-    const userExists = this.users.find(user => user.username === username && user.password === password);
-    if (userExists) {
-      await this.setUserSession(username); // Llamada asíncrona a setUserSession
-      return true; // Autenticación exitosa
-    }
-
-    return false; // Usuario o contraseña incorrectos
+  // Método para restablecer la contraseña
+  verificarUsuario(nombre: string): Observable<any[]> {
+    // Llama a la API para verificar si el usuario existe (json-server simula esto)
+    return this.http.get<any[]>(`${this.apiUrl}?nombre=${nombre}`);
   }
 
   // Guarda la sesión del usuario en Ionic Storage
-  async setUserSession(username: string): Promise<void> {
+  async setUserSession(nombre: string): Promise<void> {
     await this.storage.set('isLoggedIn', true);  // Guarda el estado de autenticación
-    await this.storage.set('username', username); // Guarda el username del usuario autenticado
+    await this.storage.set('nombre', nombre); // Guarda el nombre de usuario
   }
 
   // Verifica si el usuario está autenticado (para AuthGuard)
@@ -64,11 +64,11 @@ export class AuthServiceService {
   // Cierra la sesión del usuario
   async logout(): Promise<void> {
     await this.storage.remove('isLoggedIn'); // Elimina el estado de autenticación
-    await this.storage.remove('username');   // Elimina el username almacenado
+    await this.storage.remove('nombre');   // Elimina el nombre de usuario almacenado
   }
 
-  // Obtiene el username del usuario actualmente autenticado
+  // Obtiene el nombre de usuario del usuario autenticado
   async getUserUsername(): Promise<string | null> {
-    return await this.storage.get('username');
+    return await this.storage.get('nombre');
   }
 }

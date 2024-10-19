@@ -43,17 +43,38 @@
     {
       "id": "10",
       "nombre": "Cesar Escamilla",
-      "email": "cescamill@barronvieyra.cl"
+      "email": "cescamill@barronvieyra.cl",
+      "password": "Calo1234"
     },
     {
       "id": "20",
       "nombre": "Carlos Ycochea",
-      "email": "chinbote@barronvieyra.cl"
+      "email": "chinbote@barronvieyra.cl",
+      "password": "Calo1234"
     },
     {
       "id": "12",
       "nombre": "Edgardo Pinares",
-      "email": "vegano_como _profe_ingles@barronvieyra.cl"
+      "email": "veganoql@barronvieyra.cl",
+      "password": "Calo1234"
+    },
+    {
+      "id": "8ad8",
+      "nombre": "pedro",
+      "email": "pedro@barronvieyra.cl",
+      "password": "Calo1234"
+    },
+    {
+      "id": "adfa",
+      "nombre": "ernesto",
+      "email": "ernesto@barronvieyra.cl",
+      "password": "Calo1234"
+    },
+    {
+      "id": "f88a",
+      "nombre": "caro",
+      "email": "caro@barronvieyra.cl",
+      "password": "Calu2345"
     }
   ]
 }
