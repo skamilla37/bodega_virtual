@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { EliminarUbicacionPageRoutingModule } from './eliminar-ubicacion-routing.module';
 
 import { EliminarUbicacionPage } from './eliminar-ubicacion.page';
+import { SqliteService } from '../sqlite.service';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { EliminarUbicacionPage } from './eliminar-ubicacion.page';
     IonicModule,
     EliminarUbicacionPageRoutingModule
   ],
-  declarations: [EliminarUbicacionPage]
+  declarations: [EliminarUbicacionPage],
+  providers: [SqliteService]
 })
 export class EliminarUbicacionPageModule {}
