@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { UbicacionesPageRoutingModule } from './ubicaciones-routing.module';
 
 import { UbicacionesPage } from './ubicaciones.page';
+import { SqliteService } from '../sqlite.service';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { UbicacionesPage } from './ubicaciones.page';
     IonicModule,
     UbicacionesPageRoutingModule
   ],
-  declarations: [UbicacionesPage]
+  declarations: [UbicacionesPage],
+  providers: [SqliteService] // Agregar el servicio SqliteService aquí
 })
 export class UbicacionesPageModule {}

@@ -8,6 +8,8 @@ import { ActualizarUbicacionPageRoutingModule } from './actualizar-ubicacion-rou
 
 import { ActualizarUbicacionPage } from './actualizar-ubicacion.page';
 
+import { SqliteService } from '../sqlite.service';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -16,6 +18,7 @@ import { ActualizarUbicacionPage } from './actualizar-ubicacion.page';
     ActualizarUbicacionPageRoutingModule,
     ReactiveFormsModule
   ],
-  declarations: [ActualizarUbicacionPage]
+  declarations: [ActualizarUbicacionPage],
+  providers: [SqliteService]
 })
 export class ActualizarUbicacionPageModule {}

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SqliteService } from '../sqlite.service';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-ubicaciones',
@@ -9,38 +9,26 @@ import { AlertController, NavController } from '@ionic/angular';
 })
 export class UbicacionesPage implements OnInit {
 
-  ubicaciones: any[] = []; // Almacenar las ubicaciones
+  ubicaciones: any[] = []; // Arreglo para almacenar las ubicaciones
+  nuevaUbicacion = { nombre: '', rack: '', ubicacion: '', cantidad: 0 }; // Modelo para agregar/modificar ubicación
 
   constructor(
-    private sqliteService: SqliteService, // Servicio de SQLite y API
-    private alertController: AlertController, // Para mostrar alertas
-    private navCtrl: NavController // Para navegar a otras páginas
+    private sqliteService: SqliteService,
+    private alertController: AlertController
   ) {}
 
-  async ngOnInit() {
-    try {
-      // Esperar a que la base de datos esté completamente inicializada
-      await this.sqliteService.initializeDatabase();
-      console.log('Base de datos lista, cargando ubicaciones...');
-      this.cargarUbicaciones();
-    } catch (error) {
-      console.error('Error en la inicialización de la base de datos:', error);
-    }
+  ngOnInit() {
+    this.cargarUbicaciones(); // Cargar las ubicaciones al inicializar la página
   }
 
-  // Cargar todas las ubicaciones
+  // Cargar ubicaciones, ya sea desde la API o desde SQLite según disponibilidad
   cargarUbicaciones() {
-    this.sqliteService.obtenerUbicaciones().subscribe({
-      next: (ubicaciones) => {
-        console.log('Ubicaciones cargadas:', ubicaciones);
-        this.ubicaciones = ubicaciones; // Asigna las ubicaciones cargadas
-      },
-      error: (err) => {
-        console.error('Error al cargar ubicaciones:', err);
-      }
+    this.sqliteService.obtenerUbicaciones().subscribe((ubicaciones: any[]) => {
+      this.ubicaciones = ubicaciones;
+    }, error => {
+      this.presentAlert('Error', 'No se pudo cargar las ubicaciones.');
     });
   }
-
 
   // Función para mostrar alertas
   async presentAlert(header: string, message: string) {

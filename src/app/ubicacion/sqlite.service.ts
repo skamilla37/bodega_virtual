@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SQLiteObject, SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Platform } from '@ionic/angular';
-import { from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Injectable({
@@ -22,39 +22,24 @@ export class SqliteService {
   }
 
   // Inicializar la base de datos SQLite
-  async initializeDatabase(): Promise<void> {
-    try {
-      console.log('Inicializando la base de datos...');
-      this.dbInstance = await this.sqlite.create({
-        name: this.dbName,
-        location: 'default'
-      });
-  
-      if (!this.dbInstance) {
-        throw new Error('No se pudo crear la instancia de SQLite');
-      }
-  
-      console.log('Base de datos SQLite inicializada correctamente:', this.dbInstance);
-  
-      await this.dbInstance.executeSql(
-        `CREATE TABLE IF NOT EXISTS ${this.tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, rack TEXT, ubicacion TEXT, cantidad INTEGER)`,
-        []
-      );
-      console.log('Tabla de ubicaciones creada.');
-    } catch (error) {
-      console.error('Error al inicializar la base de datos:', error);
-      throw error;  // Asegúrate de que el error se propaga adecuadamente
-    }
+  async initializeDatabase() {
+    this.dbInstance = await this.sqlite.create({
+      name: this.dbName,
+      location: 'default'
+    });
+
+    // Crear la tabla de ubicaciones si no existe
+    await this.dbInstance.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${this.tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, rack TEXT, ubicacion TEXT, cantidad INTEGER)`,
+      []
+    );
   }
 
   // Verificar si la API REST está disponible
   verificarConexionApi(): Observable<boolean> {
     return this.http.get(this.apiUrl, { observe: 'response' }).pipe(
-      map(response => response.status === 200),  // Si la respuesta es 200, la API está disponible
-      catchError(() => {
-        console.log("API no disponible. Usando SQLite local.");
-        return of(false);  // Si ocurre un error, devolver false para usar SQLite
-      })
+      map(response => response.status === 200),  // Si la respuesta es 200, está disponible
+      catchError(() => of(false))  // Si ocurre un error, no está disponible
     );
   }
 
@@ -100,17 +85,12 @@ export class SqliteService {
     return this.verificarConexionApi().pipe(
       switchMap((apiDisponible: boolean) => {
         if (apiDisponible) {
-          console.log('API REST disponible. Cargando ubicaciones desde la API.');
           return this.getUbicacionesRemote(); // Si la API está disponible, carga desde la API
         } else {
-          console.log('API REST no disponible. Cargando ubicaciones desde SQLite.');
           return this.getUbicacionesLocal(); // Si no hay conexión, carga desde SQLite
         }
       }),
-      catchError((error) => {
-        console.error('Error al obtener ubicaciones. Cargando desde SQLite:', error);
-        return this.getUbicacionesLocal();  // En caso de error, carga desde SQLite
-      })
+      catchError(() => this.getUbicacionesLocal())  // En caso de error, carga desde SQLite
     );
   }
 
@@ -121,23 +101,13 @@ export class SqliteService {
 
   // Obtener ubicaciones locales desde SQLite
   getUbicacionesLocal(): Observable<any[]> {
-    if (!this.dbInstance) {
-      console.error('Error: La base de datos SQLite no está inicializada.');
-      return of([]); // Retornar un observable vacío si no está inicializada
-    }
-  
     return from(this.dbInstance.executeSql(`SELECT * FROM ${this.tableName}`, [])).pipe(
       map((res) => {
         const ubicaciones = [];
         for (let i = 0; i < res.rows.length; i++) {
           ubicaciones.push(res.rows.item(i));
         }
-        console.log('Ubicaciones cargadas desde SQLite:', ubicaciones);
         return ubicaciones;
-      }),
-      catchError((error) => {
-        console.error('Error al cargar ubicaciones desde SQLite:', error);
-        return of([]);  // Retornar un observable vacío en caso de error
       })
     );
   }
@@ -147,17 +117,12 @@ export class SqliteService {
     return this.verificarConexionApi().pipe(
       switchMap((apiDisponible: boolean) => {
         if (apiDisponible) {
-          console.log("Conexión a la API disponible. Agregando ubicación a la API.");
           return this.addUbicacionRemote(ubicacion); // Si la API está disponible, agrega a la API
         } else {
-          console.log("Conexión a la API no disponible. Agregando ubicación a SQLite.");
           return this.addUbicacionLocal(ubicacion); // Si no hay conexión, agrega en SQLite
         }
       }),
-      catchError((error) => {
-        console.error("Error al verificar la conexión o agregar la ubicación. Agregando a SQLite:", error);
-        return this.addUbicacionLocal(ubicacion); // Si hay error, agrega en SQLite
-      })
+      catchError(() => this.addUbicacionLocal(ubicacion))  // Si hay error, agrega en SQLite
     );
   }
 
@@ -168,27 +133,10 @@ export class SqliteService {
 
   // Agregar una ubicación en SQLite
   addUbicacionLocal(ubicacion: any): Observable<any> {
-    if (!this.dbInstance) {
-      console.error('Error: La base de datos no está inicializada.');
-      return of(null);  // Retorna un observable vacío en caso de error
-    }
-  
     const query = `INSERT INTO ${this.tableName} (nombre, rack, ubicacion, cantidad) VALUES (?, ?, ?, ?)`;
     const params = [ubicacion.nombre, ubicacion.rack, ubicacion.ubicacion, ubicacion.cantidad];
-    console.log('Guardando ubicación en SQLite:', ubicacion);
-    
-    return from(this.dbInstance.executeSql(query, params)).pipe(
-      map((res) => {
-        console.log('Ubicación guardada en SQLite:', res);
-        return res;
-      }),
-      catchError((error) => {
-        console.error('Error al guardar la ubicación en SQLite:', error);
-        return of(error);
-      })
-    );
+    return from(this.dbInstance.executeSql(query, params));
   }
-
   // Modificar una ubicación (API o SQLite según disponibilidad)
   modificarUbicacion(id: number, ubicacion: any): Observable<any> {
     return this.verificarConexionApi().pipe(
@@ -214,7 +162,6 @@ export class SqliteService {
     const params = [ubicacion.nombre, ubicacion.rack, ubicacion.ubicacion, ubicacion.cantidad, id];
     return from(this.dbInstance.executeSql(query, params));
   }
-
   // Eliminar una ubicación (API o SQLite según disponibilidad)
   eliminarUbicacion(id: number): Observable<any> {
     return this.verificarConexionApi().pipe(
@@ -239,6 +186,7 @@ export class SqliteService {
     const query = `DELETE FROM ${this.tableName} WHERE id = ?`;
     return from(this.dbInstance.executeSql(query, [id]));
   }
+  
 
   // Sincronizar ubicaciones locales con el servidor y eliminarlas de SQLite
   sincronizarUbicaciones(): Observable<any> {
@@ -249,7 +197,7 @@ export class SqliteService {
             switchMap(() => this.deleteUbicacionLocal(ubicacion.id))
           )
         );
-        return from(syncObservables);
+        return forkJoin(syncObservables);
       }),
       catchError((error) => {
         console.log("Error en la sincronización: ", error);
