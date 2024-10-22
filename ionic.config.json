@@ -1,7 +1,0 @@
-{
-  "name": "bodega_virtual",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
