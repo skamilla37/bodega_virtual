@@ -13,7 +13,7 @@ export class SqliteService {
   private dbInstance!: SQLiteObject;
   private readonly dbName: string = 'ubicaciones.db';
   private readonly tableName: string = 'ubicaciones';
-  private apiUrl = 'http://localhost:3000/ubicaciones'; // URL del json-server
+  private apiUrl = 'http://192.168.1.125:3000/ubicaciones'; // URL del json-server
 
   constructor(private http: HttpClient, private sqlite: SQLite, private platform: Platform) {
     this.platform.ready().then(() => {

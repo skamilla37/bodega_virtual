@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthServiceService {
-  private apiUrl = 'http://localhost:3000/usuarios'; // URL del json-server
+  private apiUrl = 'http://192.168.1.125:3000/usuarios'; // URL del json-server
 
   constructor(private storage: Storage, private http: HttpClient) {
     this.init();
